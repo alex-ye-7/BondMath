@@ -6,5 +6,3 @@ You may need to install autograd with
 ```
 pip install autograd
 ```
-
-My next goal is to incorporate these functions with some front-end. 

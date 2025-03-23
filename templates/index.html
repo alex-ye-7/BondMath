@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bond Calculator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        function isNumeric(value) {
+            return !isNaN(value) && isFinite(value);
+        }
+        /* Auto-updating the form */
+        /* endpoint decides which function to call, value goes to flask, target specifies where to update in the front*/
+        async function update(endpoint, value, targetElement) {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'input': value })
+            });
+            const data = await response.json();
+
+            // Update the target element with the response data
+            var target = 0
+            if (targetElement === 'yield') {
+                target = data.yield;
+            } else if (targetElement === 'price') {
+                target = data.price;
+            }
+            document.getElementById(targetElement).value = target;
+        }
+
+        window.onload = () => {
+            document.getElementById('yield').addEventListener('input', () => {
+                const yieldVal = document.getElementById('yield').value;
+                if (yieldVal !== '' && isNumeric(yieldVal)) {
+                    update('/update_price', yieldVal, 'price');
+                }
+            });
+
+            document.getElementById('price').addEventListener('input', () => {
+                const priceVal = document.getElementById('price').value;
+                if (priceVal !== '' && isNumeric(priceVal)) {
+                    update('/update_yield', priceVal, 'yield');
+                }
+            });
+        };
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Bond Math Calculator</h1>
+    </header>
+    <main>
+        <div class="form-container">
+            <div class="form-group">
+                <label> Face Value ($):
+                    <input type="text" id="face">
+                </label>
+            </div>
+            <div class="form-group">
+                <label> Annual Coupon Rate (%):
+                    <input type="text" id="coupon">
+                </label>
+            </div>
+            <div class="form-group">
+                <label> Coupon Frequency:
+                    <select name="coupon-frequency" id="freq">
+                        <option value="annual">Annually</option>
+                        <option value="semiannual" selected>Semiannually</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </label>
+            </div>
+            <div class="form-group">
+                <label> Day-Count Convention:
+                    <input type="text" id="ddc">
+                </label>
+            </div>
+            <div class="form-group">
+                <label> Settlement Date:
+                    <input type="date" id="settlement">
+                </label>
+            </div>
+            <div class="form-group">
+                <label> Maturity Date:
+                    <input type="date" id="maturity">
+                </label>
+            </div>
+
+            <div class="form-group-horizontal">
+                <label> Yield:
+                    <input type="text" id="yield">
+                </label>
+
+                <label> Price:
+                    <input type="text" id="price">
+                </label>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
