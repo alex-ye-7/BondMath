@@ -12,12 +12,26 @@
         /* Auto-updating the form */
         /* endpoint decides which function to call, value goes to flask, target specifies where to update in the front*/
         async function update(endpoint, value, targetElement) {
+            const faceValue = document.getElementById('face').value;
+            const couponRate = document.getElementById('coupon').value;
+            const freq = document.getElementById('freq').value;
+            // const ddc = document.getElementById('ddc').value;
+            const settlement = document.getElementById('settlement').value; // 2025-03-17 string format
+            const maturity = document.getElementById('maturity').value;
+
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ 'input': value })
+                body: JSON.stringify({
+                    'input': value,
+                    'face': faceValue,
+                    'coupon': couponRate,
+                    'freq': freq,
+                    'settlement': settlement,
+                    'maturity': maturity
+                })
             });
             const data = await response.json();
 
@@ -75,9 +89,7 @@
                 </label>
             </div>
             <div class="form-group">
-                <label> Day-Count Convention:
-                    <input type="text" id="ddc">
-                </label>
+                <label> Day-Count Convention: ACT/ACT </label>
             </div>
             <div class="form-group">
                 <label> Settlement Date:
