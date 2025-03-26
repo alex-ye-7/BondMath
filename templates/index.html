@@ -45,11 +45,43 @@
             document.getElementById(targetElement).value = target;
         }
 
+        /* Updating risk meausures */
+        async function update_risk(endpoint) {
+            const faceValue = document.getElementById('face').value;
+            const couponRate = document.getElementById('coupon').value;
+            const freq = document.getElementById('freq').value;
+            // const ddc = document.getElementById('ddc').value;
+            const settlement = document.getElementById('settlement').value; 
+            const maturity = document.getElementById('maturity').value;
+            const yieldVal = document.getElementById('yield').value;
+
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    'yield': yieldVal,
+                    'face': faceValue,
+                    'coupon': couponRate,
+                    'freq': freq,
+                    'settlement': settlement,
+                    'maturity': maturity
+                })
+            });
+            const data = await response.json();
+
+            // Update the target element with the response data
+            document.getElementById('duration').innerHTML = data.mdur;
+            document.getElementById('convexity').innerHTML = data.convexity;
+        }
+
         window.onload = () => {
             document.getElementById('yield').addEventListener('input', () => {
                 const yieldVal = document.getElementById('yield').value;
                 if (yieldVal !== '' && isNumeric(yieldVal)) {
                     update('/update_price', yieldVal, 'price');
+                    update_risk('/update_risk');
                 }
             });
 
@@ -57,6 +89,7 @@
                 const priceVal = document.getElementById('price').value;
                 if (priceVal !== '' && isNumeric(priceVal)) {
                     update('/update_yield', priceVal, 'yield');
+                    update_risk('/update_risk');
                 }
             });
         };
@@ -106,12 +139,22 @@
                 <label> Yield:
                     <input type="text" id="yield">
                 </label>
-
                 <label> Price:
                     <input type="text" id="price">
                 </label>
             </div>
         </div>
+
+        <div class="risk-container">
+            <h3>Bond Risk Measures</h3>
+            <label> Duration (years):
+                <p id="duration"></p>
+            </label>
+            <label> Convexity (years^2):
+                <p id="convexity"></p>
+            </label>
+        </div>
+
     </main>
 </body>
 </html>

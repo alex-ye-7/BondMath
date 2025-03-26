@@ -85,3 +85,13 @@ select:focus {
     border-color: #007bff;
     outline: none;
 }
+
+.risk-container {
+    background: #d84343;
+    margin-top: 30px;
+    padding: 20px;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-family: sans-serif;
+}
