@@ -58,3 +58,23 @@ def update_yield():
 
     y = price_to_yield(stl, mat, cpn, price_val, face_val, freq, basis)
     return jsonify({"yield" : y})
+
+# API endpoint to update risk metrics
+@app.route('/update_risk', methods=['POST'])
+def update_risk():
+    data = request.get_json()
+    yld = float(data['yield'])
+    face_val = float(data['face'])
+    stl = dt.datetime.strptime(data['settlement'], "%Y-%m-%d")
+    mat = dt.datetime.strptime(data['maturity'], "%Y-%m-%d")
+    cpn = float(data['coupon'])
+    freq = convertCouponFreq(data['freq'])
+    basis = 1     # basis = convertDCC(data['dcc'])
+
+    dpdy_calc, dpdy_autograd, mdur, convexity = risk(stl, mat, cpn, yld, face_val, freq, basis)
+    return jsonify({
+        "dpdy_calc" : dpdy_calc,    
+        "dpdy_autograd" : dpdy_autograd,
+        "mdur" : mdur,
+        "convexity" : convexity
+    })
